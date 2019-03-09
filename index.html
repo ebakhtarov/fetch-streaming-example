@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+    <title>JS Bin</title>
+  </head>
+<body>
+
+<script>
+function log(str) {
+  var p = document.createElement('p');
+  p.textContent = str;
+  document.body.appendChild(p);
+}
+
+log('Fetch data');
+
+// (async() => {
+  try {
+    // const response = await fetch('http://localhost:7000', { method: 'POST', body: JSON.stringify({ key: 'secret'}) });
+    fetch('http://localhost:7000', { method: 'POST', body: JSON.stringify({ key: 'secret'}) }).then((response) => {
+      console.log('Start reading...');
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      const asyncFunc = async () => {
+        const result = await reader.read();
+        if (result.done) {
+          log("Streaming completed.");
+          reader.cancel();
+          return;
+        }
+        
+        console.log('Reading chunk…');
+        const chunk = decoder.decode(result.value);
+        log(chunk);
+
+        asyncFunc();
+      }
+      asyncFunc();
+    });
+  } catch (e) {
+    console.log("err", e)
+  }
+// })();
+</script>
+</body>
+</html>
