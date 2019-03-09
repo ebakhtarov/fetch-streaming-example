@@ -1,34 +1,25 @@
 const http = require('http')
-const qs = require('querystring');
 
-const port = 7000
+const port = 7000;
 const delay = () => new Promise(resolve => setTimeout(resolve, 1000));
 
 
 const requestHandler = async (req, res) => {
   console.log(req.url, req.method)
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST");
+  // res.setHeader("Access-Control-Allow-Methods", "POST");
+  res.setHeader("Content-Type", "text/plain");
 
-  if (req.method === 'OPTIONS') {
+  /* if (req.method === 'OPTIONS') {
     res.end();
     return;
-  }
-
-  try {
-    req.on('data', function (data) {
-      const post = qs.parse(data);
-      console.log('data', data.toString(), post)
-    });
-  }catch(err){
-    console.log('post err', err)
-  }
-  
+  }*/
   
   const startDate = new Date();
 
   for (var i = 0; i < 3; i++) {
     res.write(`${i},Max Muster,500,SUBSCRIPITON,100,ACTIVE,30\n`);
+    // res.once('drain', res.write);
     await delay();
   }
 
@@ -50,5 +41,3 @@ server.listen(port, (err) => {
   }
   console.log(`server is listening on ${port}`)
 })
-
-
